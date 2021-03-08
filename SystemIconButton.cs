@@ -17,6 +17,10 @@ namespace PersonalFolder {
         protected override void OnMouseEnter (EventArgs e) {
             isHovered = true;
             Refresh();
+
+            if (Text.Length > 0) {
+                new ToolTip().Show(Text, Form.ActiveForm, 8 + Location.X, 32 + Location.Y + Size.Height, 1200);
+            }
         }
 
         protected override void OnMouseLeave (EventArgs e) {

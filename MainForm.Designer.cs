@@ -30,9 +30,9 @@ namespace PersonalFolder {
             this.groupsSelect = new System.Windows.Forms.ListBox();
             this.usersSelect = new System.Windows.Forms.ListBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.systemIconButton1 = new PersonalFolder.SystemIconButton();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.systemIconButton1 = new PersonalFolder.SystemIconButton();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -94,17 +94,6 @@ namespace PersonalFolder {
             this.label3.Text = "Используйте двойное нажатие левой кнопкой мыши на название пользователя, чтобы от" +
     "крыть его директорию.";
             // 
-            // systemIconButton1
-            // 
-            this.systemIconButton1.BackColor = System.Drawing.SystemColors.Control;
-            this.systemIconButton1.Icon = ((System.Drawing.Image)(resources.GetObject("systemIconButton1.Icon")));
-            this.systemIconButton1.Location = new System.Drawing.Point(333, 45);
-            this.systemIconButton1.Name = "systemIconButton1";
-            this.systemIconButton1.Size = new System.Drawing.Size(20, 20);
-            this.systemIconButton1.TabIndex = 7;
-            this.systemIconButton1.Text = "systemIconButton1";
-            this.systemIconButton1.Click += new System.EventHandler(this.OpenSettings);
-            // 
             // pictureBox2
             // 
             this.pictureBox2.Image = global::PersonalFolder.Properties.Resources.user_directory;
@@ -122,6 +111,17 @@ namespace PersonalFolder {
             this.pictureBox1.Size = new System.Drawing.Size(16, 16);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
+            // 
+            // systemIconButton1
+            // 
+            this.systemIconButton1.BackColor = System.Drawing.SystemColors.Control;
+            this.systemIconButton1.Icon = ((System.Drawing.Image)(resources.GetObject("systemIconButton1.Icon")));
+            this.systemIconButton1.Location = new System.Drawing.Point(333, 45);
+            this.systemIconButton1.Name = "systemIconButton1";
+            this.systemIconButton1.Size = new System.Drawing.Size(20, 20);
+            this.systemIconButton1.TabIndex = 7;
+            this.systemIconButton1.Text = "Открыть параметры";
+            this.systemIconButton1.Click += new System.EventHandler(this.OpenSettings);
             // 
             // MainForm
             // 

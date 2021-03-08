@@ -63,9 +63,19 @@ namespace PersonalFolder.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap arrow {
+        internal static System.Drawing.Bitmap arrow_left {
             get {
-                object obj = ResourceManager.GetObject("arrow", resourceCulture);
+                object obj = ResourceManager.GetObject("arrow_left", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap arrow_right {
+            get {
+                object obj = ResourceManager.GetObject("arrow_right", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -77,6 +87,16 @@ namespace PersonalFolder.Properties {
             get {
                 object obj = ResourceManager.GetObject("details", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Icon, аналогичного (Значок).
+        /// </summary>
+        internal static System.Drawing.Icon favicon {
+            get {
+                object obj = ResourceManager.GetObject("favicon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -136,6 +156,16 @@ namespace PersonalFolder.Properties {
         internal static System.Drawing.Bitmap small_icons {
             get {
                 object obj = ResourceManager.GetObject("small-icons", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap templates {
+            get {
+                object obj = ResourceManager.GetObject("templates", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

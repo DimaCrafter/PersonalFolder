@@ -1,25 +1,64 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace PersonalFolder {
     public partial class MainForm : Form {
         public MainForm () {
+            var closeDialog = Utils.OpenProgressDialog(this, "Выполняется синхронизация...");
             InitializeComponent();
+
             if (!SettingsForm.data.inited) {
                 OpenSettings();
             }
 
-            Sync();
-            RefreshList();
+            new Thread((ThreadStart) delegate {
+                Sync();
+
+                Invoke((Action) delegate {
+                    RefreshList();
+                    closeDialog();
+                });
+            }).Start();
         }
 
-        private void Sync () {
-            if (!Directory.Exists(SettingsForm.data.remotePath) || !Directory.Exists(SettingsForm.data.localPath)) {
-                return;
+        public static void Sync () {
+            if (!Directory.Exists(SettingsForm.data.localTemplatesPath)) {
+                Directory.CreateDirectory(SettingsForm.data.localTemplatesPath);
             }
 
-            Utils.MoveMerge(SettingsForm.data.localPath, SettingsForm.data.remotePath);
+            if (Utils.DirectoryExists(SettingsForm.data.remotePath)) {
+                SettingsForm.data.cache.Clear();
+                foreach (var groupPath in Directory.GetDirectories(SettingsForm.data.remotePath)) {
+                    var group = Path.GetFileName(groupPath);
+                    var list = new List<string>();
+                    foreach (var userPath in Directory.GetDirectories(groupPath)) {
+                        list.Add(Path.GetFileName(userPath));
+                    }
+
+                    SettingsForm.data.cache.Add(group, list);
+                }
+
+                if (Directory.Exists(SettingsForm.data.localPath)) {
+                    new Thread((ThreadStart) delegate {
+                        Utils.MoveMerge(SettingsForm.data.localPath, SettingsForm.data.remotePath);
+                    });
+                }
+
+                var today = (ushort) (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds / 60 / 60 / 24);
+                if (SettingsForm.data.lastSync < today) {
+                    var md5 = MD5.Create();
+                    Utils.HashedContentsCopy(md5, SettingsForm.data.remoteTemplatesPath, SettingsForm.data.localTemplatesPath);
+
+                    md5.Dispose();
+                    SettingsForm.data.lastSync = today;
+                }
+
+                SettingsForm.WriteData();
+            }
         }
 
         private void OpenSettings (object sender = null, EventArgs e = null) {
@@ -74,7 +113,7 @@ namespace PersonalFolder {
                 isOffline = true;
             }
 
-            var explorer = new ExplorerForm(path);
+            var explorer = new ExplorerForm(path, (string) groupsSelect.SelectedItem);
             explorer.FormClosed += (_e, _sender) => {
                 Close();
 

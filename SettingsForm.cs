@@ -14,7 +14,9 @@ namespace PersonalFolder {
                 var reader = new BinaryReader(File.OpenRead(settingsPath));
                 try {
                     data.localPath = reader.ReadString();
+                    data.localTemplatesPath = Path.GetDirectoryName(data.localPath) + "\\#templates";
                     data.remotePath = reader.ReadString();
+                    data.remoteTemplatesPath = Path.GetDirectoryName(data.remotePath) + "\\#templates";
 
                     var cachedCount = reader.ReadByte();
                     for (var i = 0; i < cachedCount; i++) {
@@ -27,6 +29,12 @@ namespace PersonalFolder {
                         }
 
                         data.cache.Add(group, list);
+                    }
+
+                    try {
+                        data.lastSync = reader.ReadUInt16();
+                    } catch {
+                        // TODO: remove
                     }
 
                     data.inited = true;
@@ -72,6 +80,8 @@ namespace PersonalFolder {
                 }
             }
 
+            writer.Write(data.lastSync);
+
             writer.Dispose();
         }
 
@@ -100,7 +110,10 @@ namespace PersonalFolder {
     public struct SettingsData {
         public bool inited;
         public string localPath;
+        public string localTemplatesPath;
         public string remotePath;
+        public string remoteTemplatesPath;
+        public ushort lastSync;
         public Dictionary<string, List<string>> cache;
     }
 }

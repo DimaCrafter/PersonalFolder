@@ -1,20 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PersonalFolder {
     public partial class ExplorerForm : Form {
         private string basePath;
-        public ExplorerForm (string basePath) {
+        private string group;
+        public ExplorerForm (string basePath, string group) {
             this.basePath = basePath;
+            this.group = group;
             InitializeComponent();
 
             Icon = Icons.GetSystemIcon("explorer.exe", 0, true);
             OpenCurrentPath();
-        }
-
-        private void button1_Click (object sender, EventArgs e) {
         }
 
         private void webBrowser1_Navigated (object sender, WebBrowserNavigatedEventArgs e) {
@@ -44,19 +47,9 @@ namespace PersonalFolder {
             Win32.ChangeViewType(view, Win32.ViewType.List);
         }
 
-        private void systemIconButton2_Click (object sender, EventArgs e) {
-            var view = Win32.GetViewHandle(webBrowser1);
-            Win32.ChangeViewType(view, Win32.ViewType.Icons);
-        }
-
         private void systemIconButton3_Click (object sender, EventArgs e) {
             var view = Win32.GetViewHandle(webBrowser1);
             Win32.ChangeViewType(view, Win32.ViewType.SmallIcons);
-        }
-
-        private void systemIconButton4_Click (object sender, EventArgs e) {
-            var view = Win32.GetViewHandle(webBrowser1);
-            Win32.ChangeViewType(view, Win32.ViewType.Tiles);
         }
 
         private void systemIconButton5_Click (object sender, EventArgs e) {
@@ -136,6 +129,55 @@ namespace PersonalFolder {
             } else {
                 MessageBox.Show(null, "Указанная директория не существует", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void systemIconButton7_Click (object sender, EventArgs e) {
+            var templatesDir = SettingsForm.data.remoteTemplatesPath;
+            if (!Utils.DirectoryExists(templatesDir)) {
+                templatesDir = SettingsForm.data.localTemplatesPath;
+            }
+
+            var templateDirs = Directory.GetDirectories(templatesDir);
+
+            var items = new List<ToolStripItem>();
+            foreach (var dir in templateDirs) {
+                var namePattern = Path.GetFileName(dir).Replace('#', '.');
+                if (Regex.IsMatch(group, "^" + namePattern + "$")) {
+                    foreach (var templateFile in Directory.GetFiles(dir)) {
+                        var item = new MenuFileItem(templateFile);
+                        item.Click += onTemplateSelect;
+                        items.Add(item);
+                    }
+                }
+            }
+
+            templatesMenu.Items.Clear();
+            templatesMenu.Items.AddRange(items.ToArray());
+            if (items.Count == 0) {
+                templatesMenu.Items.AddRange(new ToolStripItem[] { new ToolStripMenuItem { Text = "Пусто", Enabled = false } });
+            }
+
+            templatesMenu.Show(templatesBtn, Point.Empty);
+        }
+
+        private void onTemplateSelect (object sender, EventArgs e) {
+            var item = (MenuFileItem) sender;
+            var dest = basePath + "\\" + Path.GetFileName(item.path);
+
+            if (File.Exists(dest)) {
+                var result = MessageBox.Show(
+                    "Файл \"" + Path.GetFileNameWithoutExtension(item.path) + "\" уже существет.\nПерезаписать?",
+                    "Внимание!",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
+
+                if (result == DialogResult.No) return;
+                File.Delete(dest);
+            }
+
+            File.Copy(item.path, dest);
+            Process.Start(dest);
         }
     }
 }
